@@ -119,12 +119,14 @@
         createTrackableModal.open(null, 'sport');
     }
 
-    function onSuggestionSelected(_categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) {
-        trackables.createTrackableFromSuggestion(suggestion, null, trackableType);
+    async function onSuggestionSelected(_categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) {
+        await trackables.createTrackableFromSuggestion(suggestion, null, trackableType);
+        await loadData();
     }
 
-    function onSingleValue(_categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
-        trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
+    async function onSingleValue(_categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
+        await trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
+        await loadData();
     }
 </script>
 
