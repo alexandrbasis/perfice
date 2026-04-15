@@ -72,7 +72,7 @@ export class TrackableService implements TrackableEntityProvider {
     }
 
     async createSingleValueTrackable(categoryId: string | null, name: string, icon: string, type: FormQuestionDataType,
-                                     trackableType: TrackableType = 'regular') {
+                                     trackableType: TrackableType = 'regular'): Promise<Trackable | undefined> {
         const mainQuestionId = crypto.randomUUID();
 
         let dataDef = questionDataTypeRegistry.getDefinition(type);
@@ -108,7 +108,7 @@ export class TrackableService implements TrackableEntityProvider {
         }
 
         await this.formService.createForm(form);
-        await this.createTrackable(name, icon, form, this.createSingleValueCardSettings(type, mainQuestionId), categoryId, trackableType);
+        return await this.createTrackable(name, icon, form, this.createSingleValueCardSettings(type, mainQuestionId), categoryId, trackableType);
     }
 
     async createTrackableFromForm(form: Form, categoryId: string | null, trackableType: TrackableType = 'regular') {

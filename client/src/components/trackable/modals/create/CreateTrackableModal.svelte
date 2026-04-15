@@ -19,8 +19,8 @@
     let modal: Modal;
 
     let {onSelectSuggestion, onSingleValue}: {
-        onSelectSuggestion: (categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) => void
-        onSingleValue: (categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) => void
+        onSelectSuggestion: (categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) => void | Promise<void>
+        onSingleValue: (categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) => void | Promise<void>
     } = $props();
 
     let categoryId: string | null = $state("");
@@ -28,7 +28,7 @@
     let trackableType: TrackableType = $state('regular');
     let lockedType = $state(false);
 
-    let singleValueModal: CreateSingleValueTrackable;
+    let singleValueModal = $state<CreateSingleValueTrackable | null>(null);
 
     export function open(addCategoryId: string | null, initialType: TrackableType = 'regular') {
         singleValue = false;
@@ -38,10 +38,10 @@
         modal.open();
     }
 
-    function onSave() {
-        let result = singleValueModal.getData();
+    async function onSave() {
+        let result = singleValueModal?.getData();
         if (result == null) return;
-        onSingleValue(categoryId, result.name, result.icon, result.type, trackableType);
+        await onSingleValue(categoryId, result.name, result.icon, result.type, trackableType);
         modal.close();
     }
 
@@ -58,8 +58,8 @@
         navigate(route);
     }
 
-    function onSelected(categoryId: string | null, suggestion: TrackableSuggestion) {
-        onSelectSuggestion(categoryId, suggestion, trackableType);
+    async function onSelected(categoryId: string | null, suggestion: TrackableSuggestion) {
+        await onSelectSuggestion(categoryId, suggestion, trackableType);
         modal.close();
     }
 </script>

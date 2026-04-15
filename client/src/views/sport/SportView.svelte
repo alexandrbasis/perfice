@@ -48,6 +48,7 @@
 
     let loadError = $state(false);
     let createError = $state<string | null>(null);
+    let createSuccess = $state<string | null>(null);
 
     async function loadData() {
         try {
@@ -123,24 +124,26 @@
     async function onSuggestionSelected(_categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) {
         try {
             createError = null;
-            await trackables.createTrackableFromSuggestion(suggestion, null, trackableType);
+            createSuccess = null;
+            let result = await trackables.createTrackableFromSuggestion(suggestion, null, trackableType);
             await loadData();
+            createSuccess = `${result.trackable.name} created`;
         } catch (e: any) {
             createError = e?.message ?? "Failed to create sport trackable";
+            createSuccess = null;
         }
     }
 
     async function onSingleValue(_categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
         try {
             createError = null;
-            console.log('[SPORT DEBUG] onSingleValue called:', {name, icon, type, trackableType});
-            await trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
-            console.log('[SPORT DEBUG] createSingleValueTrackable succeeded');
+            createSuccess = null;
+            let trackable = await trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
             await loadData();
-            console.log('[SPORT DEBUG] loadData completed, sportTrackables:', sportTrackables.length);
+            createSuccess = `${trackable?.name ?? name} created`;
         } catch (e: any) {
-            console.error('[SPORT DEBUG] error:', e);
             createError = e?.message ?? "Failed to create sport trackable";
+            createSuccess = null;
         }
     }
 </script>
@@ -160,6 +163,13 @@
                     text-red-700 dark:text-red-300 text-sm flex items-center justify-between">
             <span>{createError}</span>
             <button onclick={() => createError = null} class="ml-2 text-red-500 hover:text-red-700 font-bold">&times;</button>
+        </div>
+    {/if}
+    {#if createSuccess}
+        <div class="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg
+                    text-green-700 dark:text-green-300 text-sm flex items-center justify-between">
+            <span>{createSuccess}</span>
+            <button onclick={() => createSuccess = null} class="ml-2 text-green-500 hover:text-green-700 font-bold">&times;</button>
         </div>
     {/if}
 
