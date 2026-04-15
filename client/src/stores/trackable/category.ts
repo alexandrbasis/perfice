@@ -19,8 +19,8 @@ export class TrackableCategoryStore extends AsyncStore<TrackableCategory[]> {
             async (trackable) => await this.onTrackableCategoryDeleted(trackable));
     }
 
-    async createCategory(name: string): Promise<void> {
-        await this.trackableCategoryService.createCategory(name);
+    async createCategory(name: string): Promise<TrackableCategory> {
+        return await this.trackableCategoryService.createCategory(name);
     }
 
     async updateCategory(category: TrackableCategory): Promise<void> {

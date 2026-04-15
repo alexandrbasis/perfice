@@ -7,7 +7,7 @@
     import SportWeekNav from "@perfice/components/sport/SportWeekNav.svelte";
     import SportActivityList from "@perfice/components/sport/SportActivityList.svelte";
     import SportEmptyState from "@perfice/components/sport/SportEmptyState.svelte";
-    import {trackables, forms, journal, restDays, weekStart} from "@perfice/stores";
+    import {trackables, forms, journal, restDays, trackableCategories, weekStart} from "@perfice/stores";
     import {dateToWeekStart, dateToWeekEnd} from "@perfice/util/time/simple";
     import {SportStatsService, formatDurationMs} from "@perfice/services/sport/stats";
     import {SportStreakService} from "@perfice/services/sport/streak";
@@ -22,6 +22,7 @@
     let streakService = new SportStreakService();
     let statsService = new SportStatsService(streakService);
     let createTrackableModal: CreateTrackableModal;
+    const SPORT_CATEGORY_NAME = "Lifestyle";
 
     let weekOffset = $state(0);
 
@@ -49,6 +50,37 @@
     let loadError = $state(false);
     let createError = $state<string | null>(null);
     let createSuccess = $state<string | null>(null);
+    let sportCategoryIdPromise: Promise<string> | null = null;
+
+    async function getSportCategoryId(): Promise<string> {
+        if (sportCategoryIdPromise != null) return await sportCategoryIdPromise;
+
+        sportCategoryIdPromise = (async () => {
+            let categories = await trackableCategories.get();
+            let category = categories.find(c => c.name.trim().toLowerCase() === SPORT_CATEGORY_NAME.toLowerCase());
+            if (category != null) return category.id;
+
+            return (await trackableCategories.createCategory(SPORT_CATEGORY_NAME)).id;
+        })();
+
+        return await sportCategoryIdPromise;
+    }
+
+    async function assignUncategorizedSportTrackablesToSportCategory(items: Trackable[]): Promise<Trackable[]> {
+        let uncategorized = items.filter(t => t.categoryId == null);
+        if (uncategorized.length === 0) return items;
+
+        let categoryId = await getSportCategoryId();
+        let updated = items.map(t => t.categoryId == null ? {...t, categoryId} : t);
+
+        await Promise.all(
+            updated
+                .filter(t => uncategorized.some(u => u.id === t.id))
+                .map(t => trackables.updateTrackable(t))
+        );
+
+        return updated;
+    }
 
     async function loadData() {
         try {
@@ -59,7 +91,7 @@
                 $restDays,
             ]);
 
-            sportTrackables = st;
+            sportTrackables = await assignUncategorizedSportTrackablesToSportCategory(st);
             allForms = f;
             allRestDays = rd;
 
@@ -117,15 +149,15 @@
         }
     }
 
-    function createSportTrackable() {
-        createTrackableModal.open(null, 'sport');
+    async function createSportTrackable() {
+        createTrackableModal.open(await getSportCategoryId(), 'sport');
     }
 
-    async function onSuggestionSelected(_categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) {
+    async function onSuggestionSelected(categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) {
         try {
             createError = null;
             createSuccess = null;
-            let result = await trackables.createTrackableFromSuggestion(suggestion, null, trackableType);
+            let result = await trackables.createTrackableFromSuggestion(suggestion, categoryId, trackableType);
             await loadData();
             createSuccess = `${result.trackable.name} created`;
         } catch (e: any) {
@@ -134,11 +166,11 @@
         }
     }
 
-    async function onSingleValue(_categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
+    async function onSingleValue(categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
         try {
             createError = null;
             createSuccess = null;
-            let trackable = await trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
+            let trackable = await trackables.createSingleValueTrackable({categoryId, name, icon, type, trackableType});
             await loadData();
             createSuccess = `${trackable?.name ?? name} created`;
         } catch (e: any) {
