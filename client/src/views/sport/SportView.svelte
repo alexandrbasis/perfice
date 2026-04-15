@@ -133,9 +133,13 @@
     async function onSingleValue(_categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
         try {
             createError = null;
+            console.log('[SPORT DEBUG] onSingleValue called:', {name, icon, type, trackableType});
             await trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
+            console.log('[SPORT DEBUG] createSingleValueTrackable succeeded');
             await loadData();
+            console.log('[SPORT DEBUG] loadData completed, sportTrackables:', sportTrackables.length);
         } catch (e: any) {
+            console.error('[SPORT DEBUG] error:', e);
             createError = e?.message ?? "Failed to create sport trackable";
         }
     }
