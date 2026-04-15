@@ -9,7 +9,7 @@
     import SportEmptyState from "@perfice/components/sport/SportEmptyState.svelte";
     import {trackables, forms, journal, restDays, weekStart} from "@perfice/stores";
     import {dateToWeekStart, dateToWeekEnd} from "@perfice/util/time/simple";
-    import {SportStatsService} from "@perfice/services/sport/stats";
+    import {SportStatsService, formatDurationMs} from "@perfice/services/sport/stats";
     import {SportStreakService} from "@perfice/services/sport/streak";
     import type {Trackable, TrackableType} from "@perfice/model/trackable/trackable";
     import type {JournalEntry} from "@perfice/model/journal/journal";
@@ -169,7 +169,7 @@
         <div class="mt-3">
             <SportStatsBar
                 sessions={weekStats.sessions}
-                durationFormatted={statsService.formatDuration(weekStats.totalDurationMs)}
+                durationFormatted={formatDurationMs(weekStats.totalDurationMs)}
                 streak={weekStats.streak}
             />
         </div>
