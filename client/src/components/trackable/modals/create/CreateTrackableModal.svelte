@@ -26,6 +26,7 @@
     let categoryId: string | null = $state("");
     let singleValue = $state(false);
     let trackableType: TrackableType = $state('regular');
+    let lockedType = $state(false);
 
     let singleValueModal: CreateSingleValueTrackable;
 
@@ -33,6 +34,7 @@
         singleValue = false;
         categoryId = addCategoryId;
         trackableType = initialType;
+        lockedType = initialType !== 'regular';
         modal.open();
     }
 
@@ -65,26 +67,28 @@
 <Modal bind:this={modal} title="Create trackable" onConfirm={onSave}
        type={singleValue ? ModalType.CONFIRM_CANCEL : ModalType.CANCEL}>
     <div class="md:max-h-96 overflow-y-scroll scrollbar-hide">
-        <div class="flex gap-2 mb-4">
-            <button onclick={() => trackableType = 'regular'}
-                    class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border text-sm transition-colors
-                           {trackableType === 'regular'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                        : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}">
-                <Fa icon={faClipboardList} class="text-sm"/>
-                Regular
-            </button>
-            <button onclick={() => trackableType = 'sport'}
-                    class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border text-sm transition-colors
-                           {trackableType === 'sport'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                        : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}">
-                <Fa icon={faDumbbell} class="text-sm"/>
-                Sport
-            </button>
-        </div>
+        {#if !lockedType}
+            <div class="flex gap-2 mb-4">
+                <button onclick={() => trackableType = 'regular'}
+                        class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border text-sm transition-colors
+                               {trackableType === 'regular'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                            : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}">
+                    <Fa icon={faClipboardList} class="text-sm"/>
+                    Regular
+                </button>
+                <button onclick={() => trackableType = 'sport'}
+                        class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border text-sm transition-colors
+                               {trackableType === 'sport'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                            : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}">
+                    <Fa icon={faDumbbell} class="text-sm"/>
+                    Sport
+                </button>
+            </div>
+        {/if}
         {#if singleValue}
-            <CreateSingleValueTrackable bind:this={singleValueModal}/>
+            <CreateSingleValueTrackable bind:this={singleValueModal} isSport={trackableType === 'sport'}/>
         {:else}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <CardButton iconClass="w-14" icon={faHashtag} title="Single value"
@@ -94,25 +98,27 @@
                             description="A form with multiple questions tracked together"
                             onClick={createForm}/>
             </div>
-            <hr class="my-4">
-            <div class="row-gap text-2xl mt-8">
-                <Fa icon={faHatWizard} class="text-green-500"/>
-                <span class="text-gray-500 font-bold dark:text-white">Suggestions</span>
-            </div>
-            <div class="flex flex-col gap-2 mt-4">
-                {#each TRACKABLE_SUGGESTIONS as group}
-                    <p class="font-bold text-gray-500 text-xl dark:text-white">{group.name}</p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 md:max-w-[75%] gap-2">
-                        {#each group.suggestions as suggestion}
-                            <button onclick={() => onSelected(categoryId, suggestion)}
-                                    class="flex flex-col justify-center rounded-xl items-center gap-2 min-h-28 border hover-feedback">
-                                <Icon name={suggestion.icon} class="text-3xl"/>
-                                <p>{suggestion.name}</p>
-                            </button>
-                        {/each}
-                    </div>
-                {/each}
-            </div>
+            {#if !lockedType}
+                <hr class="my-4">
+                <div class="row-gap text-2xl mt-8">
+                    <Fa icon={faHatWizard} class="text-green-500"/>
+                    <span class="text-gray-500 font-bold dark:text-white">Suggestions</span>
+                </div>
+                <div class="flex flex-col gap-2 mt-4">
+                    {#each TRACKABLE_SUGGESTIONS as group}
+                        <p class="font-bold text-gray-500 text-xl dark:text-white">{group.name}</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 md:max-w-[75%] gap-2">
+                            {#each group.suggestions as suggestion}
+                                <button onclick={() => onSelected(categoryId, suggestion)}
+                                        class="flex flex-col justify-center rounded-xl items-center gap-2 min-h-28 border hover-feedback">
+                                    <Icon name={suggestion.icon} class="text-3xl"/>
+                                    <p>{suggestion.name}</p>
+                                </button>
+                            {/each}
+                        </div>
+                    {/each}
+                </div>
+            {/if}
         {/if}
     </div>
 </Modal>
