@@ -111,7 +111,7 @@ export class TrackableService implements TrackableEntityProvider {
         await this.createTrackable(name, icon, form, this.createSingleValueCardSettings(type, mainQuestionId), categoryId, trackableType);
     }
 
-    async createTrackableFromForm(form: Form, categoryId: string | null) {
+    async createTrackableFromForm(form: Form, categoryId: string | null, trackableType: TrackableType = 'regular') {
         await this.createTrackable(form.name, form.icon, form, {
             cardType: TrackableCardType.VALUE,
             cardSettings: {
@@ -119,7 +119,7 @@ export class TrackableService implements TrackableEntityProvider {
                 type: TrackableValueType.TABLE,
                 settings: {}
             }
-        }, categoryId);
+        }, categoryId, trackableType);
     }
 
     async createTrackable(name: string, icon: string, form: Form, card: TrackableCardSettings,

@@ -30,6 +30,7 @@ export interface EditTrackableState {
 
 export const TRACKABLE_FORM_ENTITY_TYPE = "trackable";
 export const TRACKABLE_FORM_CATEGORY_DELIM = ";";
+export const TRACKABLE_FORM_TYPE_DELIM = "@";
 
 export const TRACKABLE_VALUE_TYPES = [
     {value: TrackableValueType.TABLE, name: "Table"},

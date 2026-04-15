@@ -10,7 +10,7 @@
     import CreateSingleValueTrackable
         from "@perfice/components/trackable/modals/create/CreateSingleValueTrackable.svelte";
     import type {FormQuestionDataType} from "@perfice/model/form/form";
-    import {TRACKABLE_FORM_CATEGORY_DELIM, TRACKABLE_FORM_ENTITY_TYPE} from "@perfice/model/trackable/ui";
+    import {TRACKABLE_FORM_CATEGORY_DELIM, TRACKABLE_FORM_ENTITY_TYPE, TRACKABLE_FORM_TYPE_DELIM} from "@perfice/model/trackable/ui";
     import {NEW_FORM_ROUTE} from "@perfice/model/form/ui";
     import {navigate} from "@perfice/app";
     import type {TrackableType} from "@perfice/model/trackable/trackable";
@@ -51,6 +51,7 @@
         let route = `/forms/${NEW_FORM_ROUTE}:${TRACKABLE_FORM_ENTITY_TYPE}`;
         if (categoryId != null)
             route += `${TRACKABLE_FORM_CATEGORY_DELIM}${categoryId}`;
+        route += `${TRACKABLE_FORM_TYPE_DELIM}${trackableType}`;
 
         navigate(route);
     }

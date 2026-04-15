@@ -117,9 +117,7 @@
         <span class="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">
             {settings.name}
         </span>
-        {#if sportTrackables.length > 0}
-            <SportQuickLog trackables={sportTrackables} onSelect={onQuickLog}/>
-        {/if}
+        <SportQuickLog trackables={sportTrackables} onSelect={onQuickLog}/>
     </div>
 
     {#if !loaded}

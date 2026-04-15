@@ -18,7 +18,7 @@ import {ReflectionStore} from "@perfice/stores/reflection/reflection";
 import type {CategoryList} from "./util/category";
 import type {Trackable, TrackableCategory} from "./model/trackable/trackable";
 import type {Tag, TagCategory} from "./model/tag/tag";
-import {TRACKABLE_FORM_CATEGORY_DELIM, TRACKABLE_FORM_ENTITY_TYPE} from "@perfice/model/trackable/ui";
+import {TRACKABLE_FORM_CATEGORY_DELIM, TRACKABLE_FORM_ENTITY_TYPE, TRACKABLE_FORM_TYPE_DELIM} from "@perfice/model/trackable/ui";
 import {NotificationType} from "@perfice/model/notification/notification";
 import {DashboardStore, DashboardWidgetStore} from "@perfice/stores/dashboard/dashboard";
 import {EntryImportStore} from "@perfice/stores/import/formEntry";
@@ -162,9 +162,14 @@ export class StoreProvider {
         forms.addEntityFormCreateListener((entityType, form) => {
             if (!entityType.startsWith(TRACKABLE_FORM_ENTITY_TYPE)) return;
 
-            let parts = entityType.split(TRACKABLE_FORM_CATEGORY_DELIM);
-            trackables.onTrackableFromFormCreated(form, parts.length == 2 ? parts[1] : null);
-            navigate("/trackables");
+            // Parse trackableType from suffix: "trackable;categoryId@sport" or "trackable@sport"
+            let typeParts = entityType.split(TRACKABLE_FORM_TYPE_DELIM);
+            let trackableType = (typeParts.length == 2 ? typeParts[1] : 'regular') as import("@perfice/model/trackable/trackable").TrackableType;
+            let baseEntity = typeParts[0];
+
+            let parts = baseEntity.split(TRACKABLE_FORM_CATEGORY_DELIM);
+            trackables.onTrackableFromFormCreated(form, parts.length == 2 ? parts[1] : null, trackableType);
+            navigate(trackableType === 'sport' ? "/sport" : "/trackables");
         })
 
         this.services.notification.addNotificationClickedListener(NotificationType.REFLECTION, async (entityId) => {

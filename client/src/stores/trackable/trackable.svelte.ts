@@ -56,8 +56,8 @@ export class TrackableStore extends AsyncStore<Trackable[]> {
         this.updateResolved(v => updateIdentifiedInArray(v, trackable));
     }
 
-    async onTrackableFromFormCreated(form: Form, categoryId: string | null) {
-        await this.trackableService.createTrackableFromForm(form, categoryId);
+    async onTrackableFromFormCreated(form: Form, categoryId: string | null, trackableType: TrackableType = 'regular') {
+        await this.trackableService.createTrackableFromForm(form, categoryId, trackableType);
     }
 
     async getEditTrackableState(rawTrackable: Trackable): Promise<EditTrackableState | null> {
