@@ -41,7 +41,7 @@
     dashboards.load();
     dashboardWidgets.load(currentDashboard);
 
-    async function openFormModal(formId: string, answers?: Record<string, PrimitiveValue>) {
+    async function openFormModal(formId: string, answers?: Record<string, PrimitiveValue>, onSaved?: () => void) {
         // TODO: streamline form opening process?
         let form = await forms.getFormById(formId);
         let templates = await forms.getTemplatesByFormId(formId);
@@ -53,7 +53,9 @@
             form.format,
             dateWithCurrentTime($dashboardDate),
             templates,
-            {...getDefaultFormAnswers(form.questions), ...answers}
+            {...getDefaultFormAnswers(form.questions), ...answers},
+            undefined,
+            onSaved
         );
     }
 

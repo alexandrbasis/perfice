@@ -91,11 +91,4 @@ export class SportStatsService {
 
         return {sessions, totalDurationMs, streak};
     }
-
-    formatDuration(ms: number): string {
-        let totalMinutes = Math.floor(ms / 60000);
-        let hours = Math.floor(totalMinutes / 60);
-        let minutes = totalMinutes % 60;
-        return `${hours}h ${minutes}m`;
-    }
 }

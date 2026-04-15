@@ -27,6 +27,8 @@
         from "@perfice/components/dashboard/sidebar/edit/types/checklist/EditChecklistWidgetSidebar.svelte";
     import EditNewCorrelationsWidgetSidebar
         from "@perfice/components/dashboard/sidebar/edit/types/newCorrelations/EditNewCorrelationsWidgetSidebar.svelte";
+    import EditSportSummaryWidgetSidebar
+        from "@perfice/components/dashboard/sidebar/edit/types/sportSummary/EditSportSummaryWidgetSidebar.svelte";
 
     let {action}: { action: DashboardEditWidgetAction } = $props();
 
@@ -47,6 +49,7 @@
         [DashboardWidgetType.INSIGHTS]: EditInsightsWidgetSidebar,
         [DashboardWidgetType.NEW_CORRELATIONS]: EditNewCorrelationsWidgetSidebar,
         [DashboardWidgetType.CHECKLIST]: EditChecklistWidgetSidebar,
+        [DashboardWidgetType.SPORT_SUMMARY]: EditSportSummaryWidgetSidebar,
     };
 
     function onSettingsChange(settings: any) {

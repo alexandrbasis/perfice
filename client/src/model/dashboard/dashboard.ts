@@ -42,6 +42,10 @@ import {
     DashboardReflectionsWidgetDefinition,
     type DashboardReflectionsWidgetSettings
 } from "@perfice/model/dashboard/widgets/reflections";
+import {
+    DashboardSportSummaryWidgetDefinition,
+    type DashboardSportSummaryWidgetSettings
+} from "@perfice/model/dashboard/widgets/sportSummary";
 
 export interface Dashboard {
     id: string;
@@ -68,6 +72,7 @@ export enum DashboardWidgetType {
     INSIGHTS = "INSIGHTS",
     CHECKLIST = "CHECKLIST",
     REFLECTIONS = "REFLECTIONS",
+    SPORT_SUMMARY = "SPORT_SUMMARY",
 }
 
 export type DashboardWidget = {
@@ -90,6 +95,7 @@ export type DashboardWidgetSettings =
     | DS<DashboardWidgetType.INSIGHTS, DashboardInsightsWidgetSettings>
     | DS<DashboardWidgetType.CHECKLIST, DashboardChecklistWidgetSettings>
     | DS<DashboardWidgetType.REFLECTIONS, DashboardReflectionsWidgetSettings>
+    | DS<DashboardWidgetType.SPORT_SUMMARY, DashboardSportSummaryWidgetSettings>
     ;
 
 export interface DS<T extends DashboardWidgetType, V> {
@@ -130,6 +136,7 @@ definitions.set(DashboardWidgetType.NEW_CORRELATIONS, new DashboardNewCorrelatio
 definitions.set(DashboardWidgetType.INSIGHTS, new DashboardInsightsWidgetDefinition());
 definitions.set(DashboardWidgetType.CHECKLIST, new DashboardChecklistWidgetDefinition());
 definitions.set(DashboardWidgetType.REFLECTIONS, new DashboardReflectionsWidgetDefinition());
+definitions.set(DashboardWidgetType.SPORT_SUMMARY, new DashboardSportSummaryWidgetDefinition());
 
 export function getDashboardWidgetDefinitions(): DashboardWidgetDefinition<DashboardWidgetType, any>[] {
     return Array.from(definitions.values());

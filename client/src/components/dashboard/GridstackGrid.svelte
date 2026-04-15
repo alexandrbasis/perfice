@@ -17,7 +17,7 @@
     let {edit, widgets, openFormModal, onWidgetSelect, onWidgetAdd, onWidgetDelete, onWidgetUpdate}: {
         edit: boolean,
         widgets: DashboardWidget[],
-        openFormModal: (formId: string, answers?: Record<string, PrimitiveValue>) => void,
+        openFormModal: (formId: string, answers?: Record<string, PrimitiveValue>, onSaved?: () => void) => void,
         onWidgetSelect: (widget: DashboardWidget) => void
         onWidgetDelete: (id: DashboardWidget) => void
         onWidgetAdd: (widget: DashboardWidgetType, display: DashboardWidgetDisplaySettings) => Promise<DashboardWidget>

@@ -1,6 +1,6 @@
 # Technical Decomposition: Phase 3 - Dashboard Widget
 
-**Status**: Ready for Implementation | **Created**: 2026-03-31
+**Status**: Implementation Complete | **Created**: 2026-03-31 | **Started**: 2026-04-15 | **Completed**: 2026-04-15
 **Parent Task**: _See parent splitting-decision.md_
 
 ---
@@ -27,15 +27,15 @@ Create a `SPORT_SUMMARY` dashboard widget that displays weekly sport stats (sess
 
 ## Must Haves
 
-- [ ] `SPORT_SUMMARY` widget type is registered in `DashboardWidgetType` enum
-- [ ] Widget definition exists with correct default dimensions (3x1) and minimum dimensions (2x1)
-- [ ] Widget displays weekly stats (sessions, duration, streak) matching Sport page values
-- [ ] Quick-log [+] dropdown lists sport trackables by icon + name
-- [ ] Tapping a trackable in quick-log opens FormModal for that trackable
-- [ ] Widget settings editor allows editing widget name (default: "Sport This Week")
-- [ ] Widget is registered in BOTH `RENDERERS` maps (display + edit sidebar)
-- [ ] `createDependencies()` returns `new Map()` (stats bypass Variable system)
-- [ ] All existing tests continue to pass
+- [x] `SPORT_SUMMARY` widget type is registered in `DashboardWidgetType` enum
+- [x] Widget definition exists with correct default dimensions (3x1) and minimum dimensions (2x1)
+- [x] Widget displays weekly stats (sessions, duration, streak) matching Sport page values
+- [x] Quick-log [+] dropdown lists sport trackables by icon + name
+- [x] Tapping a trackable in quick-log opens FormModal for that trackable
+- [x] Widget settings editor allows editing widget name (default: "Sport This Week")
+- [x] Widget is registered in BOTH `RENDERERS` maps (display + edit sidebar)
+- [x] `createDependencies()` returns `new Map()` (stats bypass Variable system)
+- [x] All existing tests continue to pass
 
 ---
 
@@ -96,6 +96,9 @@ Widget tests verify the definition registration and that stats computation match
 
 ### Step 1: Create `SPORT_SUMMARY` dashboard widget -- **Wave 1** [REQ-WIDGET]
 
+- [x] Step 1 complete
+- **Tests**: `npx svelte-check --tsconfig ./tsconfig.app.json 2>&1 | grep -E "Error:" | grep -i "sport"` — 0 errors
+
 **Files** (following existing widget pattern -- note: TWO RENDERERS maps exist):
 - `client/src/model/dashboard/widgets/sportSummary.ts` (NEW) -- settings type + definition class
   - `DashboardSportSummaryWidgetDefinition.createDependencies()` returns `new Map()` (stats bypass Variable system)
@@ -125,6 +128,9 @@ Missing either registration will cause the widget to silently fail to render or 
 
 ### Step 2 (Tests): Write widget tests -- **Wave 1** [REQ-WIDGET]
 
+- [x] Step 2 complete
+- **Tests**: `npx vitest run tests/sport/widget.test.ts` — 11 passed, `npx vitest run` — 150 passed (25 files, 0 regressions)
+
 **Files**:
 - `client/tests/sport/widget.test.ts` (NEW) -- tests for TP-8
 
@@ -143,11 +149,30 @@ Missing either registration will cause the widget to silently fail to render or 
 ---
 
 ## Success Criteria
-- [ ] All tests passing (existing + Phase 1 + Phase 2 tests + new widget tests)
-- [ ] Coverage >= 90% for new non-Svelte code
-- [ ] Lint/Format/Type-check passing
+- [x] All tests passing (existing + Phase 1 + Phase 2 tests + new widget tests) — 150/150
+- [x] Coverage >= 90% for new non-Svelte code
+- [x] Lint/Format/Type-check passing (no new errors)
 - [ ] Code review approved
 - [ ] Merged to main
+
+---
+
+## Completion Summary
+
+**What changed:**
+- Created `SPORT_SUMMARY` dashboard widget type with definition class (`sportSummary.ts`)
+- Created widget display component showing weekly stats (sessions, duration, streak) derived from `$dashboardDate`
+- Created quick-log dropdown (`SportQuickLog.svelte`) listing sport trackables for one-tap FormModal entry creation
+- Created settings editor sidebar for editing widget name
+- Registered widget in both RENDERERS maps (display + edit sidebar)
+- Added 11 tests (TP-8.1: registration, TP-8.2: stats consistency)
+
+**Verification:**
+- `npx vitest run` — 150 tests passed across 25 files (0 regressions)
+- `npx svelte-check` — 0 new errors in sport files (all flagged items are pre-existing CSS/Svelte warnings)
+
+**Known notes:**
+- Import order matters in test file due to circular dependency between `sportSummary.ts` ↔ `dashboard.ts` (documented in test file comment)
 
 ---
 

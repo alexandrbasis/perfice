@@ -27,6 +27,7 @@
     let date: Date = $state(new Date());
 
     let editEntry: JournalEntry | undefined;
+    let savedCallback: (() => void) | undefined;
     let answers: Record<string, PrimitiveValue> = $state({});
     let templates: FormTemplate[] = $state([]);
 
@@ -39,7 +40,8 @@
     let embed: FormEmbed;
 
     export function open(logForm: Form, formQuestions: FormQuestion[], displayFormat: TextOrDynamic[], logDate: Date,
-                         availableTemplates: FormTemplate[], existingAnswers?: Record<string, PrimitiveValue>, entry?: JournalEntry) {
+                         availableTemplates: FormTemplate[], existingAnswers?: Record<string, PrimitiveValue>, entry?: JournalEntry,
+                         onSaved?: () => void) {
 
         form = logForm;
         date = logDate;
@@ -47,6 +49,7 @@
         questions = formQuestions;
         editEntry = entry;
         templates = availableTemplates;
+        savedCallback = onSaved;
         answers = existingAnswers ?? getDefaultFormAnswers(form.questions);
         currentTemplateName = null;
         modal.open();
@@ -89,6 +92,7 @@
             createOrUpdateTemplate($state.snapshot(currentTemplateName), answers);
         }
 
+        savedCallback?.();
         close();
     }
 

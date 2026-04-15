@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {SportStatsService} from "../../src/services/sport/stats";
+import {SportStatsService, formatDurationMs} from "../../src/services/sport/stats";
 import {SportStreakService} from "../../src/services/sport/streak";
 import {mockEntry} from "../common";
 import {pNumber} from "../../src/model/primitive/primitive";
@@ -84,7 +84,7 @@ test("duration sums all TIME_ELAPSED fields in entry", () => {
 
     let stats = statsService.computeWeekStats(entries, trackables, forms, [], weekStart, weekEnd, weekStart);
     expect(stats.totalDurationMs).toBe(3600000); // 1h
-    expect(statsService.formatDuration(stats.totalDurationMs)).toBe("1h 0m");
+    expect(formatDurationMs(stats.totalDurationMs)).toBe("1h 0m");
 });
 
 // TP-3.3: Duration across multiple entries
@@ -100,7 +100,7 @@ test("duration sums across multiple entries", () => {
 
     let stats = statsService.computeWeekStats(entries, trackables, forms, [], weekStart, weekEnd, weekStart);
     expect(stats.totalDurationMs).toBe(4500000); // 75min
-    expect(statsService.formatDuration(stats.totalDurationMs)).toBe("1h 15m");
+    expect(formatDurationMs(stats.totalDurationMs)).toBe("1h 15m");
 });
 
 // TP-3.4: Zero entries in week
@@ -112,15 +112,15 @@ test("zero entries gives zero sessions and zero duration", () => {
 
     let stats = statsService.computeWeekStats([], trackables, forms, [], weekStart, weekEnd, weekStart);
     expect(stats.sessions).toBe(0);
-    expect(statsService.formatDuration(stats.totalDurationMs)).toBe("0h 0m");
+    expect(formatDurationMs(stats.totalDurationMs)).toBe("0h 0m");
 });
 
 // TP-3.5: Duration format is always Xh Ym
 test("duration format is always Xh Ym", () => {
-    expect(statsService.formatDuration(2700000)).toBe("0h 45m"); // 45 minutes
-    expect(statsService.formatDuration(0)).toBe("0h 0m");
-    expect(statsService.formatDuration(3600000)).toBe("1h 0m");
-    expect(statsService.formatDuration(5400000)).toBe("1h 30m");
+    expect(formatDurationMs(2700000)).toBe("0h 45m"); // 45 minutes
+    expect(formatDurationMs(0)).toBe("0h 0m");
+    expect(formatDurationMs(3600000)).toBe("1h 0m");
+    expect(formatDurationMs(5400000)).toBe("1h 30m");
 });
 
 // TP-7.5.1: Zero-duration TIME_ELAPSED entry
@@ -136,10 +136,10 @@ test("zero-duration entry counts as session with 0h 0m", () => {
     let stats = statsService.computeWeekStats(entries, trackables, forms, [], weekStart, weekEnd, weekStart);
     expect(stats.sessions).toBe(1);
     expect(stats.totalDurationMs).toBe(0);
-    expect(statsService.formatDuration(stats.totalDurationMs)).toBe("0h 0m");
+    expect(formatDurationMs(stats.totalDurationMs)).toBe("0h 0m");
 });
 
 // TP-7.5.2: Very large duration formatting
 test("very large duration formats correctly", () => {
-    expect(statsService.formatDuration(6000 * 60000)).toBe("100h 0m"); // 6000 minutes
+    expect(formatDurationMs(6000 * 60000)).toBe("100h 0m"); // 6000 minutes
 });

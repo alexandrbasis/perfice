@@ -22,10 +22,12 @@
         from "@perfice/components/dashboard/types/checkList/DashboardChecklistWidget.svelte";
     import DashboardReflectionsWidget
         from "@perfice/components/dashboard/types/reflections/DashboardReflectionsWidget.svelte";
+    import DashboardSportSummaryWidget
+        from "@perfice/components/dashboard/types/sportSummary/DashboardSportSummaryWidget.svelte";
 
     let {widget, onClick, onDelete, openFormModal}: {
         widget: DashboardWidget,
-        openFormModal: (formId: string, answers?: Record<string, PrimitiveValue>) => void,
+        openFormModal: (formId: string, answers?: Record<string, PrimitiveValue>, onSaved?: () => void) => void,
         onClick: (widget: DashboardWidget) => void,
         onDelete: (widget: DashboardWidget) => void
     } = $props();
@@ -33,7 +35,7 @@
     const RENDERERS: Record<DashboardWidgetType, Component<{
         settings: any,
         dependencies: Record<string, string>,
-        openFormModal: (formId: string, answers?: Record<string, PrimitiveValue>) => void,
+        openFormModal: (formId: string, answers?: Record<string, PrimitiveValue>, onSaved?: () => void) => void,
         widgetId: string,
     }>> = {
         [DashboardWidgetType.ENTRY_ROW]: DashboardEntryRowWidget,
@@ -48,6 +50,7 @@
         [DashboardWidgetType.INSIGHTS]: DashboardInsightsWidget,
         [DashboardWidgetType.CHECKLIST]: DashboardChecklistWidget,
         [DashboardWidgetType.REFLECTIONS]: DashboardReflectionsWidget,
+        [DashboardWidgetType.SPORT_SUMMARY]: DashboardSportSummaryWidget,
     };
 
     function onClicked() {
