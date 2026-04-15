@@ -166,11 +166,11 @@
         }
     }
 
-    async function onSingleValue(categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
+    async function onSingleValue(categoryId: string | null, name: string, icon: string, types: FormQuestionDataType[], trackableType: TrackableType) {
         try {
             createError = null;
             createSuccess = null;
-            let trackable = await trackables.createSingleValueTrackable({categoryId, name, icon, type, trackableType});
+            let trackable = await trackables.createSingleValueTrackable({categoryId, name, icon, types, trackableType});
             await loadData();
             createSuccess = `${trackable?.name ?? name} created`;
         } catch (e: any) {

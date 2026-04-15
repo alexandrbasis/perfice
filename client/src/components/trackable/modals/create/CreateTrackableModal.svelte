@@ -20,7 +20,7 @@
 
     let {onSelectSuggestion, onSingleValue}: {
         onSelectSuggestion: (categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) => void | Promise<void>
-        onSingleValue: (categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) => void | Promise<void>
+        onSingleValue: (categoryId: string | null, name: string, icon: string, types: FormQuestionDataType[], trackableType: TrackableType) => void | Promise<void>
     } = $props();
 
     let categoryId: string | null = $state("");
@@ -41,7 +41,7 @@
     async function onSave() {
         let result = singleValueModal?.getData();
         if (result == null) return;
-        await onSingleValue(categoryId, result.name, result.icon, result.type, trackableType);
+        await onSingleValue(categoryId, result.name, result.icon, result.types, trackableType);
         modal.close();
     }
 

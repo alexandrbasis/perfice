@@ -61,8 +61,8 @@
         trackables.createTrackableFromSuggestion(suggestion, categoryId, trackableType);
     }
 
-    function onSingleValue(categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
-        trackables.createSingleValueTrackable({categoryId, name, icon, type, trackableType});
+    function onSingleValue(categoryId: string | null, name: string, icon: string, types: FormQuestionDataType[], trackableType: TrackableType) {
+        trackables.createSingleValueTrackable({categoryId, name, icon, types, trackableType});
     }
 
     $effect(() =>

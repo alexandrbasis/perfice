@@ -17,7 +17,7 @@ import {
 import {ListVariableType} from "@perfice/services/variable/types/list";
 import {AggregateType, AggregateVariableType} from "@perfice/services/variable/types/aggregate";
 import type {FormService} from "@perfice/services/form/form";
-import {type Form, FormQuestionDataType, FormQuestionDisplayType} from "@perfice/model/form/form";
+import {type Form, FormQuestionDataType, FormQuestionDisplayType, type FormQuestion} from "@perfice/model/form/form";
 import {type EntityObserverCallback, EntityObservers, EntityObserverType} from "@perfice/services/observer";
 import type {AnalyticsSettingsService} from "@perfice/services/analytics/settings";
 import {parseTrackableSuggestion, type TrackableSuggestion} from "@perfice/model/trackable/suggestions";
@@ -71,44 +71,58 @@ export class TrackableService implements TrackableEntityProvider {
         };
     }
 
-    async createSingleValueTrackable(categoryId: string | null, name: string, icon: string, type: FormQuestionDataType,
+    async createSingleValueTrackable(categoryId: string | null, name: string, icon: string, types: FormQuestionDataType | FormQuestionDataType[],
                                      trackableType: TrackableType = 'regular'): Promise<Trackable | undefined> {
-        const mainQuestionId = crypto.randomUUID();
+        let questionTypes = Array.isArray(types) ? types : [types];
+        if (questionTypes.length === 0) return;
 
-        let dataDef = questionDataTypeRegistry.getDefinition(type);
-        if (dataDef == null) return;
+        let questions = questionTypes.map(type => {
+            let dataDef = questionDataTypeRegistry.getDefinition(type);
+            if (dataDef == null) return null;
 
-        let dataSettings = {
-            dataType: type,
-            dataSettings: dataDef.getDefaultSettings()
-        }
+            return {
+                id: crypto.randomUUID(),
+                name: questionTypes.length === 1 ? name : dataDef.getName(),
+                dataType: type,
+                dataSettings: dataDef.getDefaultSettings()
+            };
+        });
+
+        if (questions.some(q => q == null)) return;
+
+        let createdQuestions = questions as {
+            id: string,
+            name: string,
+            dataType: FormQuestionDataType,
+            dataSettings: object
+        }[];
+
+        let mainQuestion = createdQuestions.find(q => q.dataType === FormQuestionDataType.TIME_ELAPSED) ?? createdQuestions[0];
+        let formQuestions = createdQuestions.map(question => ({
+            id: question.id,
+            name: question.name,
+            unit: null,
+            displayType: FormQuestionDisplayType.INPUT,
+            defaultValue: null,
+            displaySettings: {},
+            dataType: question.dataType,
+            dataSettings: question.dataSettings
+        })) as FormQuestion[];
 
         let form: Form = {
             id: crypto.randomUUID(),
             name,
             icon,
             snapshotId: crypto.randomUUID(),
-            format: [
-                {
-                    dynamic: true,
-                    value: mainQuestionId
-                }
-            ],
-            questions: [
-                {
-                    id: mainQuestionId,
-                    name: name,
-                    unit: null,
-                    displayType: FormQuestionDisplayType.INPUT,
-                    defaultValue: null,
-                    displaySettings: {},
-                    ...dataSettings
-                }
-            ]
+            format: createdQuestions.map(question => ({
+                dynamic: true,
+                value: question.id
+            })),
+            questions: formQuestions
         }
 
         await this.formService.createForm(form);
-        return await this.createTrackable(name, icon, form, this.createSingleValueCardSettings(type, mainQuestionId), categoryId, trackableType);
+        return await this.createTrackable(name, icon, form, this.createSingleValueCardSettings(mainQuestion.dataType, mainQuestion.id), categoryId, trackableType);
     }
 
     async createTrackableFromForm(form: Form, categoryId: string | null, trackableType: TrackableType = 'regular') {

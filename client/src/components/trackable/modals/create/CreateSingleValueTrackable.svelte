@@ -8,21 +8,36 @@
 
     let name = $state("");
     let icon = $state("");
-    let selectedType = $state(isSport ? FormQuestionDataType.TIME_ELAPSED : "");
+    let selectedTypes = $state<FormQuestionDataType[]>(isSport ? [FormQuestionDataType.TIME_ELAPSED] : []);
 
     const IGNORED_TYPES = [FormQuestionDataType.HIERARCHY];
 
     function selectQuestionType(newType: string) {
-        selectedType = newType;
+        let type = newType as FormQuestionDataType;
+        if (!isSport) {
+            selectedTypes = [type];
+            return;
+        }
+
+        if (type === FormQuestionDataType.TIME_ELAPSED) return;
+
+        selectedTypes = selectedTypes.includes(type)
+            ? selectedTypes.filter(t => t !== type)
+            : [...selectedTypes, type];
     }
 
-    export function getData(): { name: string, icon: string, type: FormQuestionDataType } | null {
-        if (selectedType == "") return null;
+    export function getData(): { name: string, icon: string, types: FormQuestionDataType[] } | null {
+        let orderedTypes = definitions
+            .map(([type, _]) => type as FormQuestionDataType)
+            .filter(type => selectedTypes.includes(type));
+
+        if (orderedTypes.length === 0) return null;
+        if (isSport && !orderedTypes.includes(FormQuestionDataType.TIME_ELAPSED)) return null;
 
         return {
             name,
             icon,
-            type: selectedType as FormQuestionDataType
+            types: orderedTypes
         }
     }
 
@@ -38,13 +53,13 @@
 </div>
 <p class="label mt-4">Type</p>
 {#if isSport}
-    <p class="text-xs text-amber-600 dark:text-amber-400 mt-1">Sport trackables require a duration (time elapsed) field</p>
+    <p class="text-xs text-amber-600 dark:text-amber-400 mt-1">Time elapsed is required. Select Date as well to record the workout date.</p>
 {/if}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
     {#each definitions as [type, definition]}
         <SelectCardButton iconClass="w-8" icon={definition.getIcon()} title={definition.getName()}
                           description=""
-                          selected={selectedType === type}
+                          selected={selectedTypes.includes(type as FormQuestionDataType)}
                           onSelect={() => selectQuestionType(type)}/>
     {/each}
 </div>

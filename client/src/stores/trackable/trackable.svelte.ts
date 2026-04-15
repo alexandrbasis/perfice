@@ -204,14 +204,14 @@ export class TrackableStore extends AsyncStore<Trackable[]> {
         return trackable;
     }
 
-    async createSingleValueTrackable({categoryId, name, icon, type, trackableType = 'regular'}: {
+    async createSingleValueTrackable({categoryId, name, icon, types, trackableType = 'regular'}: {
         categoryId: string | null,
         name: string,
         icon: string,
-        type: FormQuestionDataType,
+        types: FormQuestionDataType[],
         trackableType?: TrackableType
     }) {
-        return await this.trackableService.createSingleValueTrackable(categoryId, name, icon, type, trackableType);
+        return await this.trackableService.createSingleValueTrackable(categoryId, name, icon, types, trackableType);
     }
 
     async createTrackableGoalInEditState(trackable: Trackable): Promise<Variable | null> {
