@@ -47,6 +47,7 @@
     let loaded = $state(false);
 
     let loadError = $state(false);
+    let createError = $state<string | null>(null);
 
     async function loadData() {
         try {
@@ -120,13 +121,23 @@
     }
 
     async function onSuggestionSelected(_categoryId: string | null, suggestion: TrackableSuggestion, trackableType: TrackableType) {
-        await trackables.createTrackableFromSuggestion(suggestion, null, trackableType);
-        await loadData();
+        try {
+            createError = null;
+            await trackables.createTrackableFromSuggestion(suggestion, null, trackableType);
+            await loadData();
+        } catch (e: any) {
+            createError = e?.message ?? "Failed to create sport trackable";
+        }
     }
 
     async function onSingleValue(_categoryId: string | null, name: string, icon: string, type: FormQuestionDataType, trackableType: TrackableType) {
-        await trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
-        await loadData();
+        try {
+            createError = null;
+            await trackables.createSingleValueTrackable({categoryId: null, name, icon, type, trackableType});
+            await loadData();
+        } catch (e: any) {
+            createError = e?.message ?? "Failed to create sport trackable";
+        }
     }
 </script>
 
@@ -139,6 +150,14 @@
     </div>
 
     <SportWeekNav weekStart={currentWeekStart} weekEnd={currentWeekEnd} onPrev={prevWeek} onNext={nextWeek}/>
+
+    {#if createError}
+        <div class="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg
+                    text-red-700 dark:text-red-300 text-sm flex items-center justify-between">
+            <span>{createError}</span>
+            <button onclick={() => createError = null} class="ml-2 text-red-500 hover:text-red-700 font-bold">&times;</button>
+        </div>
+    {/if}
 
     {#if !loaded}
         <div class="py-8 text-center text-gray-400">Loading...</div>
