@@ -8,7 +8,7 @@
 
     let name = $state("");
     let icon = $state("");
-    let selectedType = $state("");
+    let selectedType = $state(isSport ? FormQuestionDataType.TIME_ELAPSED : "");
 
     const IGNORED_TYPES = [FormQuestionDataType.HIERARCHY];
 
@@ -42,11 +42,9 @@
 {/if}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
     {#each definitions as [type, definition]}
-        <div class={isSport && type === FormQuestionDataType.TIME_ELAPSED ? 'ring-2 ring-blue-500 rounded-xl' : ''}>
-            <SelectCardButton iconClass="w-8" icon={definition.getIcon()} title={definition.getName()}
-                              description=""
-                              selected={selectedType === type}
-                              onSelect={() => selectQuestionType(type)}/>
-        </div>
+        <SelectCardButton iconClass="w-8" icon={definition.getIcon()} title={definition.getName()}
+                          description=""
+                          selected={selectedType === type}
+                          onSelect={() => selectQuestionType(type)}/>
     {/each}
 </div>
